@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+
+<html lang="ro">
+<head>
+<link href="./dependencies/audio-logo.png" rel="icon" type="image/png"/>
+<meta charset="utf-8"/>
+<title>Radio-uri pe net</title>
+<style>
+body{font-family:Arial;font-size:24px;background:#BFC5CE;color:#111;text-align:center;text-shadow: 1px 0px 0px #000000;padding:20px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;}
+.station{background:#FFFFFFFF;padding:10px;border-radius:20px;box-shadow: 0 0 5px rgba(0,0,0,0.8);cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;}
+.station:hover{background:#FFFFFFFF;}
+
+/* FIXED LOGOS */
+.station img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  background:#FFFFFF00;
+  padding:10px;
+  box-sizing:border-box;
+  border-radius:8px;
+}
+
+audio{
+  position:sticky;
+  top:10px;
+  z-index:9999;
+
+  width:min(350px, 100%);
+  margin:30px auto 30px auto;
+
+  display:block;
+
+  border-radius:50px;
+  overflow:hidden;
+
+  box-shadow:0 0 5px rgba(0,0,0,0.8);
+
+  background:#ffffff;
+
+  transform:scale(1.25);
+
+  backdrop-filter:blur(10px);
+}
+.station.active{background:#00c3ff;color:#000;transform:scale(1.00);}
+#search {
+  font-size: 24px;
+  margin: 10px;
+  padding: 10px;
+  width: 100%;padding-left: 3%;
+  max-width: 300px;
+  border-radius: 50px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+  border: none;
+  transform: scale(1.25);
+}
+#nowPlaying{margin:20px;font-size:24px;text-align:center;color:#0000FF;}
+
+</style>
+<script src="./dependencies/hls.js"></script>
+</head>
+<body>
+<h1><p>📻</p>Radio-uri pe net</h1>
+<input id="search" placeholder="🔎 Caută radio..." type="text"/>
+<div id="nowPlaying">Selectează un radio 🎵</div>
+
+<audio autoplay="" controls="" id="player"></audio><div class="grid">
+<div class="station"
+     data-logo="./radio_logos/Radio_Arad.png" onclick="playRadio('http://radioarad.arad1.ro:8000/radio-arad', this)">
+<img src="./radio_logos/Radio_Arad.png"/>
+<div>Radio Arad</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Lipova.png" onclick="playRadio('http://asculta.radiolipova.ro:1717/stream', this)">
+<img src="./radio_logos/Radio_Lipova.png"/>
+<div>Radio Lipova</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Popular_Maramures.jpg" onclick="playRadio('https://stream-284.zeno.fm/5ah6nntufzzuv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiI1YWg2bm50dWZ6enV2IiwiaG9zdCI6InN0cmVhbS0yODQuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IklQRWs5MzBpVGdDemR4bUdoWHdaYXciLCJpYXQiOjE3Nzg2MjU2MDcsImV4cCI6MTc3ODYyNTY2N30.7E1G2TrtxwD8tNGwdt9eEjjCuuoC7go_zdhREPTeVvo', this)">
+<img src="./radio_logos/Radio_Popular_Maramures.jpg"/>
+<div>Radio Popular Maramureş</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Pro_Popular.png" onclick="playRadio('https://live.radiopropopular.com/9998/stream', this)">
+<img src="./radio_logos/Radio_Pro_Popular.png"/>
+<div>Radio Pro Popular</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Popular.png" onclick="playRadio('https://livessl.radiopopular.ro:7777/live', this)">
+<img src="./radio_logos/Radio_Popular.png"/>
+<div>Radio Popular</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_AS_Petrecere.jpg" onclick="playRadio('https://stream-289.zeno.fm/zp999wm4tm0uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJ6cDk5OXdtNHRtMHV2IiwiaG9zdCI6InN0cmVhbS0yODkuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IkJ0VzFpVTZuUjIyNk5DOUgzWHNlTXciLCJpYXQiOjE3Nzk1NDAwMDQsImV4cCI6MTc3OTU0MDA2NH0.oNbQfXSZ61vVD-pLaVJGsfDluGZVheRWCRqzlxS4wXs', this)">
+<img src="./radio_logos/Radio_AS_Petrecere.jpg"/>
+<div>Radio AS - Muzică de Petrecere</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Petrecaretzu.jpg" onclick="playRadio('http://live.radiopetrecaretzu.ro:8383/stream', this)">
+<img src="./radio_logos/Radio_Petrecaretzu.jpg"/>
+<div>Radio Petrecăretzu</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioDorynArad.png" onclick="playRadio('https://stream-291.zeno.fm/jhtla4fa291vv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJqaHRsYTRmYTI5MXZ2IiwiaG9zdCI6InN0cmVhbS0yOTEuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6InV6MlExY1l5Um8tRFkzWkVSUEdvV3ciLCJpYXQiOjE3NzgxOTM5MDMsImV4cCI6MTc3ODE5Mzk2M30.vuixln4_J_JoWkDrXsxxOXQwRysyKgvYAUtFg7tcUoc', this)">
+<img src="./radio_logos/RadioDorynArad.png"/>
+<div>RadioDorynArad</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioIdealRo.png" onclick="playRadio('https://radio.gazduirejocuri.ro/8014/stream', this)">
+<img src="./radio_logos/RadioIdealRo.png"/>
+<div>RadioIdeal.ro</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Joy_FM.png" onclick="playRadio('http://82.76.219.237:8000/JoyFm', this)">
+<img src="./radio_logos/Joy_FM.png"/>
+<div>Joy FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Clubradio.png" onclick="playRadio('https://live.clubradio.ro/listen/clubradio/live', this)">
+<img src="./radio_logos/Clubradio.png"/>
+<div>Clubradio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Hangos_Rádió.png" onclick="playRadio('https://stream-288.zeno.fm/mv62tmd8wp8uv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJtdjYydG1kOHdwOHV2IiwiaG9zdCI6InN0cmVhbS0yODguemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IlNNaGZPLXpPUnZ5UG9na05HYU93NGciLCJpYXQiOjE3NzgxOTU1ODgsImV4cCI6MTc3ODE5NTY0OH0.nHHqFtQLxD05A89RK688Xv3Mz3GLPWO2N_hHUEiVsMc', this)">
+<img src="./radio_logos/Hangos_Rádió.png"/>
+<div>Hangos Rádió</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Impuls.png" onclick="playRadio('https://live.radio-impuls.ro/stream', this)">
+<img src="./radio_logos/Radio_Impuls.png"/>
+<div>Radio Impuls</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_ZU.png" onclick="playRadio('https://live7digi.antenaplay.ro/radiozu/radiozu-48000.m3u8', this)">
+<img src="./radio_logos/Radio_ZU.png"/>
+<div>Radio ZU</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/KissFM.png" onclick="playRadio('https://live.kissfm.ro:8443/kissfm.aacp', this)">
+<img src="./radio_logos/KissFM.png"/>
+<div>Kiss FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Virgin_Radio.jpg" onclick="playRadio('https://astreaming.edi.ro:8443/VirginRadio_aac', this)">
+<img src="./radio_logos/Virgin_Radio.jpg"/>
+<div>Virgin Radio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/ProFM.png" onclick="playRadio('http://edge126.rdsnet.ro:84/profm/profm.mp3', this)">
+<img src="./radio_logos/ProFM.png"/>
+<div>Pro FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/DanceFM.jpg" onclick="playRadio('https://edge126.rcs-rds.ro/profm/dancefm.mp3', this)">
+<img src="./radio_logos/DanceFM.jpg"/>
+<div>Dance FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Digi_FM.jpg" onclick="playRadio('http://edge76.rdsnet.ro:84/digifm/digifm.mp3', this)">
+<img src="./radio_logos/Digi_FM.jpg"/>
+<div>Digi FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Big_FM.png" onclick="playRadio('http://82.208.143.10:8000/stream', this)">
+<img src="./radio_logos/Big_FM.png"/>
+<div>Big FM Deva</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/EuropaFM.png" onclick="playRadio('https://astreaming.edi.ro:8443/EuropaFM_aac', this)">
+<img src="./radio_logos/EuropaFM.png"/>
+<div>Europa FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/MagicFM.jpg" onclick="playRadio('https://live.magicfm.ro/magicfm.aacp', this)">
+<img src="./radio_logos/MagicFM.jpg"/>
+<div>Magic FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Prahova.png" onclick="playRadio('https://r2.mediastreaming.ro/listen/rph/radio.mp3', this)">
+<img src="./radio_logos/Radio_Prahova.png"/>
+<div>Radio Prahova</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Transilvania_Oradea.png" onclick="playRadio('https://stream2.radiotransilvania.ro/Oradea', this)">
+<img src="./radio_logos/Radio_Transilvania_Oradea.png"/>
+<div>Radio Transilvania Oradea</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Nostalgia_Radio.png" onclick="playRadio('https://live.radionostalgia.ro:8443/nostalgia.aac', this)">
+<img src="./radio_logos/Nostalgia_Radio.png"/>
+<div>Nostalgia Radio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Napoca_FM.png" onclick="playRadio('https://nfm-s1.bit-ns.cloud/stream1', this)">
+<img src="./radio_logos/Napoca_FM.png"/>
+<div>Napoca FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Accent.png" onclick="playRadio('http://86.122.157.14:8900/stream', this)">
+<img src="./radio_logos/Radio_Accent.png"/>
+<div>Radio Accent Târgu Jiu</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Infinit.png" onclick="playRadio('http://86.127.68.115:18000/infinit64.ogg', this)">
+<img src="./radio_logos/Radio_Infinit.png"/>
+<div>Radio Infinit Gorj</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Xtream.png" onclick="playRadio('https://asculta.radioxtream.com:8022/stream', this)">
+<img src="./radio_logos/Radio_Xtream.png"/>
+<div>Radio Xtream</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/onefm-logo.png" onclick="playRadio('http://live.onefm.ro/onefm.aacp', this)">
+<img src="./radio_logos/onefm-logo.png"/>
+<div>One FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/West_City_Radio.png" onclick="playRadio('http://live.westcityradio.ro:8000/mp3', this)">
+<img src="./radio_logos/West_City_Radio.png"/>
+<div>West City Radio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Arad_FM.png" onclick="playRadio('https://stream4.srr.ro:8443/arad-fm', this)">
+<img src="./radio_logos/Radio_Arad_FM.png"/>
+<div>Radio Arad FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Timisoara_FM.png" onclick="playRadio('http://89.238.227.6:8356/stream', this)">
+<img src="./radio_logos/Radio_Timisoara_FM.png"/>
+<div>Radio Timişoara FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Bucuresti_FM.png" onclick="playRadio('http://89.238.227.6:8032/stream', this)">
+<img src="./radio_logos/Bucuresti_FM.png"/>
+<div>Radio Bucureşti FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Actualitati.png" onclick="playRadio('http://89.238.227.6:8000/stream', this)">
+<img src="./radio_logos/Actualitati.png"/>
+<div>Radio România Actualități</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Cultural.png" onclick="playRadio('http://89.238.227.6:8012/stream', this)">
+<img src="./radio_logos/Cultural.png"/>
+<div>Radio România Cultural</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/International.png" onclick="playRadio('http://stream2.srr.ro:8052/;', this)">
+<img src="./radio_logos/International.png"/>
+<div>Radio România Internaţional</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Deea.png" onclick="playRadio('https://radiocdn.nxthost.com/radio-deea', this)">
+<img src="./radio_logos/Radio_Deea.png"/>
+<div>Radio Deea</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Vibe_Underground_Radio.png" onclick="playRadio('https://radio.sonicpanel.ro/8028/stream', this)">
+<img src="./radio_logos/Vibe_Underground_Radio.png"/>
+<div>Vibe Underground Radio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Vibe_FM_Romania.jpg" onclick="playRadio('http://live.radiovibefm.eu:8052/stream', this)">
+<img src="./radio_logos/Vibe_FM_Romania.jpg"/>
+<div>Vibe FM Romania</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RADIO_PRO-B.jpg" onclick="playRadio('https://live.radioprob.ro/8888/live', this)">
+<img src="./radio_logos/RADIO_PRO-B.jpg"/>
+<div>RADIO PRO-B ROMANIA - HIT CLUBBING STATION</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Hot_Style.jpg" onclick="playRadio('http://live.radiohot.ro:8000/stream', this)">
+<img src="./radio_logos/Radio_Hot_Style.jpg"/>
+<div>Radio Hot Style Romania</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Live247_Radio_HITS.png" onclick="playRadio('https://stream21.expohost.eu/radio/9010/radio.aac', this)">
+<img src="./radio_logos/Live247_Radio_HITS.png"/>
+<div>Live247 Radio HITS</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/24_House_Radio.png" onclick="playRadio('https://24houseradio-adradio.radioca.st/128?aw_0_1st.collectionid=8785&amp;stationId=8785&amp;publisherId=210', this)">
+<img src="./radio_logos/24_House_Radio.png"/>
+<div>24 House Radio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Deep_House_Radio.png" onclick="playRadio('https://streaming-01.xtservers.com:7000/encoder.mp3', this)">
+<img src="./radio_logos/Deep_House_Radio.png"/>
+<div>Deep House Radio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Deep_Romania.png" onclick="playRadio('https://cast1.asurahosting.com/proxy/alin/stream', this)">
+<img src="./radio_logos/Radio_Deep_Romania.png"/>
+<div>Radio Deep Romania</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Viva.png" onclick="playRadio('https://cast4.asurahosting.com/proxy/geo/stream', this)">
+<img src="./radio_logos/Radio_Viva.png"/>
+<div>Radio Viva - Deep House &amp; Dance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Cafe.png" onclick="playRadio('https://live.radiocafe.ro/live.aac', this)">
+<img src="./radio_logos/Radio_Cafe.png"/>
+<div>Radio Café</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Play_Radio.png" onclick="playRadio('https://live.playradio.org:8443/FMHD', this)">
+<img src="./radio_logos/Play_Radio.png"/>
+<div>Play Radio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Play_Cafe.png" onclick="playRadio('https://live.playradio.org:8443/CafeHD', this)">
+<img src="./radio_logos/Play_Cafe.png"/>
+<div>Play Café</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Play_90s.png" onclick="playRadio('https://live.playradio.org:8443/90HD', this)">
+<img src="./radio_logos/Play_90s.png"/>
+<div>Play 90's</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Pro_Music_90s.png" onclick="playRadio('https://playradiohit90-adradio.radioca.st/stream?aw_0_1st.collectionid=8414&amp;stationId=8414&amp;publisherId=213', this)">
+<img src="./radio_logos/Radio_Pro_Music_90s.png"/>
+<div>Radio Pro Music 90s</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/YOU_FM.jpg" onclick="playRadio('https://sonic2-rbx.cloud-center.ro:8034/stream', this)">
+<img src="./radio_logos/YOU_FM.jpg"/>
+<div>YOU FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Best_Dance.png" onclick="playRadio('https://sonicssl.namehost.ro/8500/stream', this)">
+<img src="./radio_logos/Radio_Best_Dance.png"/>
+<div>Radio Best Dance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/PlayMusic_FM.png" onclick="playRadio('https://free.rcast.net/400/', this)">
+<img src="./radio_logos/PlayMusic_FM.png"/>
+<div>PlayMusic FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Activ_FM.png" onclick="playRadio('https://stream.clever-host.ro/8008/stream', this)">
+<img src="./radio_logos/Activ_FM.png"/>
+<div>Activ FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Impact_FM.png" onclick="playRadio('https://cloud.radiosonicpanel.ro/8016/stream', this)">
+<img src="./radio_logos/Impact_FM.png"/>
+<div>Impact FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Total.png" onclick="playRadio('http://radiototal.radioca.st/stream/;', this)">
+<img src="./radio_logos/Radio_Total.png"/>
+<div>Radio Total</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Puls_FM.png" onclick="playRadio('http://mxii.go.ro:8090/;', this)">
+<img src="./radio_logos/Puls_FM.png"/>
+<div>Puls FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Oldies.png" onclick="playRadio('https://live.radiooldies.ro/9200/stream', this)">
+<img src="./radio_logos/Radio_Oldies.png"/>
+<div>Radio Oldies</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_90_Hit.png" onclick="playRadio('https://live.90hit.ro:8000/radio.mp3', this)">
+<img src="./radio_logos/Radio_90_Hit.png"/>
+<div>Radio 90 Hit</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/90s-3NeRgYReMiX.png" onclick="playRadio('https://strw3.openstream.co/861?aw_0_1st.collectionid%3D6850%26stationId%3D6850%26publisherId%3D885%26k%3D1778624662', this)">
+<img src="./radio_logos/90s-3NeRgYReMiX.png"/>
+<div>90s 3NeRgY Remix</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/GherlaFM.png" onclick="playRadio('https://listen.streamaudio.co/proxy/gherlafm/stream', this)">
+<img src="./radio_logos/GherlaFM.png"/>
+<div>Gherla FM - Radio Discoteca 90</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Eurodance_90.png" onclick="playRadio('http://91.121.59.45:8394/stream', this)">
+<img src="./radio_logos/Eurodance_90.png"/>
+<div>eurodance90.fr - Eurodance 90</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/PsyRadio_FM.png" onclick="playRadio('http://65.109.32.21:8010/stream', this)">
+<img src="./radio_logos/PsyRadio_FM.png"/>
+<div>PsyRadio FM - Progressive</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Anima_Amoris.png" onclick="playRadio('https://amoris.sknt.ru/trance', this)">
+<img src="./radio_logos/Anima_Amoris.png"/>
+<div>Anima Amoris - Trance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/PulsRadio_Dance.png" onclick="playRadio('http://stream.pulsradio.com:5000', this)">
+<img src="./radio_logos/PulsRadio_Dance.png"/>
+<div>PulsRadio Dance - Puls.fr</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/TechnoBase.FM.jpg" onclick="playRadio('http://listen.technobase.fm/tunein-mp3-m3u', this)">
+<img src="./radio_logos/TechnoBase.FM.jpg"/>
+<div>TechnoBase.FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/HouseTime.FM.png" onclick="playRadio('http://listen.housetime.fm/tunein-mp3-m3u', this)">
+<img src="./radio_logos/HouseTime.FM.png"/>
+<div>HouseTime.FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/HardBase.FM.png" onclick="playRadio('http://listen.hardbase.fm/tunein-mp3-m3u', this)">
+<img src="./radio_logos/HardBase.FM.png"/>
+<div>HardBase.FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/TranceBase.FM.png" onclick="playRadio('http://listen.trancebase.fm/tunein-mp3-m3u', this)">
+<img src="./radio_logos/TranceBase.FM.png"/>
+<div>TranceBase.FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/CoreTime.FM.png" onclick="playRadio('https://listener1.mp3.tb-group.fm/hb.mp3', this)">
+<img src="./radio_logos/CoreTime.FM.png"/>
+<div>CoreTime.FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/ClubTime.FM.png" onclick="playRadio('https://listener3.aach.tb-group.fm/ht-high.aac', this)">
+<img src="./radio_logos/ClubTime.FM.png"/>
+<div>ClubTime.FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/TeaTime.FM.jpg" onclick="playRadio('http://listen.teatime.fm/tunein-mp3-m3u', this)">
+<img src="./radio_logos/TeaTime.FM.jpg"/>
+<div>TeaTime.FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/replayfm.png" onclick="playRadio('http://listen.replay.fm/tunein-mp3-m3u', this)">
+<img src="./radio_logos/replayfm.png"/>
+<div>Replay.FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_Main.png" onclick="playRadio('https://main-high.rautemusik.fm/stream.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_Main.png"/>
+<div>RauteMusik.FM Main - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_Lounge.png" onclick="playRadio('http://lounge-high.rautemusik.fm/listen.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_Lounge.png"/>
+<div>RauteMusik.FM Lounge - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_HardeR.png" onclick="playRadio('http://harder-high.rautemusik.fm/listen.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_HardeR.png"/>
+<div>RauteMusik.FM HardeR - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_Club.png" onclick="playRadio('http://club-high.rautemusik.fm/listen.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_Club.png"/>
+<div>RauteMusik.FM Club - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_Techno.png" onclick="playRadio('https://streams.rautemusik.fm/techno/mp3-192', this)">
+<img src="./radio_logos/RauteMusik.FM_Techno.png"/>
+<div>RauteMusik.FM Techno - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_TechHouse.png" onclick="playRadio('http://techhouse-high.rautemusik.fm/listen.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_TechHouse.png"/>
+<div>RauteMusik.FM TechHouse - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_House.png" onclick="playRadio('http://house-high.rautemusik.fm/listen.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_House.png"/>
+<div>RauteMusik.FM House - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_Trance.png" onclick="playRadio('http://trance-high.rautemusik.fm/listen.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_Trance.png"/>
+<div>RauteMusik.FM Trance - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_Jam.png" onclick="playRadio('http://jam-high.rautemusik.fm/listen.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_Jam.png"/>
+<div>RauteMusik.FM Jam - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RauteMusik.FM_90s.png" onclick="playRadio('http://90s-high.rautemusik.fm/listen.mp3', this)">
+<img src="./radio_logos/RauteMusik.FM_90s.png"/>
+<div>RauteMusik.FM 90s - www.rm.fm</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/POWERHITZ.COM.png" onclick="playRadio('http://powerhitz.powerhitz.com:5000', this)">
+<img src="./radio_logos/POWERHITZ.COM.png"/>
+<div>POWERHITZ.COM - 1POWER - #1 For Hitz Hip-Hop</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/National_FM.png" onclick="playRadio('http://live3.nationalfm.ro:8001/;stream/1', this)">
+<img src="./radio_logos/National_FM.png"/>
+<div>Național FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Favorit_FM.png" onclick="playRadio('http://91.250.252.251:8001/;stream/1', this)">
+<img src="./radio_logos/Favorit_FM.png"/>
+<div>Favorit FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RADIO_SUPER_FM.png" onclick="playRadio('https://live.superfm.ro/stream.mp3', this)">
+<img src="./radio_logos/RADIO_SUPER_FM.png"/>
+<div>RADIO SUPER FM 93.8 FM BRASOV</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Expert_FM.jpg" onclick="playRadio('http://expertfm.zapto.org:8000/;stream', this)">
+<img src="./radio_logos/Radio_Expert_FM.jpg"/>
+<div>Radio Expert FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Taraf_ROMANIA_MANELE.png" onclick="playRadio('http://asculta.radiotaraf.com:7100/stream', this)">
+<img src="./radio_logos/Radio_Taraf_ROMANIA_MANELE.png"/>
+<div>Radio Taraf ROMANIA MANELE</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio-HiT-FM-Romania-Manele.png" onclick="playRadio('http://live.radiohitfm.net:8989/stream', this)">
+<img src="./radio_logos/Radio-HiT-FM-Romania-Manele.png"/>
+<div>Radio HiT FM Romania Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio-HiT-FM-Romania-Petrecere.jpg" onclick="playRadio('http://petrecere.radiohitfm.net:8340/stream', this)">
+<img src="./radio_logos/Radio-HiT-FM-Romania-Petrecere.jpg"/>
+<div>Radio HiT FM Romania Muzica de petrecere</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Liberty_Manele.png" onclick="playRadio('https://sonicssl.namehost.ro/7770/stream', this)">
+<img src="./radio_logos/Radio_Liberty_Manele.png"/>
+<div>Radio Liberty Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Pro_Manele.png" onclick="playRadio('http://radiopromanele.zapto.org:8000/;', this)">
+<img src="./radio_logos/Radio_Pro_Manele.png"/>
+<div>Radio Pro Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/radiovipfm-ro.png" onclick="playRadio('https://radio.sonicpanel.ro:8270/stream', this)">
+<img src="./radio_logos/radiovipfm-ro.png"/>
+<div>radiovipfm.ro: Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/radiovipfm-ro..png" onclick="playRadio('https://radio.sonicpanel.ro:8168/stream', this)">
+<img src="./radio_logos/radiovipfm-ro..png"/>
+<div>radiovipfm.ro: Populară &amp; Petrecere</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RGV_Manele.png" onclick="playRadio('http://radio.sonicpanel.ro:8104/stream', this)">
+<img src="./radio_logos/RGV_Manele.png"/>
+<div>RGV Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Tequila_Manele.png" onclick="playRadio('https://ssl.servereradio.ro/7000/stream', this)">
+<img src="./radio_logos/Radio_Tequila_Manele.png"/>
+<div>Radio Tequila Romania Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Tequila_Petrecere.png" onclick="playRadio('https://petrecere.radiotequila.ro/7000/stream', this)">
+<img src="./radio_logos/Radio_Tequila_Petrecere.png"/>
+<div>Radio Tequila Romania Petrecere</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Tequila_Dance.png" onclick="playRadio('https://dance.radiotequila.ro/7000/stream', this)">
+<img src="./radio_logos/Radio_Tequila_Dance.png"/>
+<div>Radio Tequila Romania Dance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Tequila_Hip-Hop.png" onclick="playRadio('https://ssl.omegahost.ro/7000/stream', this)">
+<img src="./radio_logos/Radio_Tequila_Hip-Hop.png"/>
+<div>Radio Tequila Romania Hip-Hop</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Nebunya_Manele.png" onclick="playRadio('http://live.radionebunya.ro:7575/stream', this)">
+<img src="./radio_logos/Radio_Nebunya_Manele.png"/>
+<div>RaDio NeBunYa Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Vip.png" onclick="playRadio('http://live1.radiovip.ro:8969/stream', this)">
+<img src="./radio_logos/Radio_Vip.png"/>
+<div>Radio Vip</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_1_Manele.png" onclick="playRadio('https://ssl.omegahost.ro/8000/stream', this)">
+<img src="./radio_logos/Radio_1_Manele.png"/>
+<div>Radio 1 Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Manele_Premium.png" onclick="playRadio('https://manelepremium-adradio.radioca.st/128?aw_0_1st.collectionid=8894&amp;stationId=8894&amp;publisherId=209', this)">
+<img src="./radio_logos/Manele_Premium.png"/>
+<div>Manele Premium</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Romanian_Manele.png" onclick="playRadio('https://asculta.radioromanian.net/manele', this)">
+<img src="./radio_logos/Radio_Romanian_Manele.png"/>
+<div>Radio Romanian Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Romanian_Dance.png" onclick="playRadio('https://asculta.radioromanian.net/dance', this)">
+<img src="./radio_logos/Radio_Romanian_Dance.png"/>
+<div>Radio Romanian Dance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Romanian_Hip-Hop.png" onclick="playRadio('https://asculta.radioromanian.net/hiphop', this)">
+<img src="./radio_logos/Radio_Romanian_Hip-Hop.png"/>
+<div>Radio Romanian Hip Hop</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Romanian_Disco.png" onclick="playRadio('https://asculta.radioromanian.net/disco', this)">
+<img src="./radio_logos/Radio_Romanian_Disco.png"/>
+<div>Radio Romanian Disco</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Romanian_Popular.png" onclick="playRadio('https://asculta.radioromanian.net/popular', this)">
+<img src="./radio_logos/Radio_Romanian_Popular.png"/>
+<div>Radio Romanian Popular</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Romanian_Rock.png" onclick="playRadio('https://asculta.radioromanian.net/rock', this)">
+<img src="./radio_logos/Radio_Romanian_Rock.png"/>
+<div>Radio Romanian Rock</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Rock_FM.png" onclick="playRadio('https://live.rockfm.ro/rockfm.aacp', this)">
+<img src="./radio_logos/Rock_FM.png"/>
+<div>Rock FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Chill_FM.png" onclick="playRadio('https://edge126.rcs-rds.ro/profm/chillfm.mp3', this)">
+<img src="./radio_logos/Chill_FM.png"/>
+<div>Chill FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Focus_FM.png" onclick="playRadio('http://live.focusfm.ro:8000/focusfm.ogg', this)">
+<img src="./radio_logos/Focus_FM.png"/>
+<div>Focus FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Digi_24_FM.png" onclick="playRadio('https://edge126.rcs-rds.ro/digifm/digi24fm.mp3', this)">
+<img src="./radio_logos/Digi_24_FM.png"/>
+<div>Digi 24 FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Realitatea_FM.png" onclick="playRadio('https://shout.realitatea.net:8001/mixt', this)">
+<img src="./radio_logos/Realitatea_FM.png"/>
+<div>Realitatea FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Urban_FM.png" onclick="playRadio('https://urbanfm.ro:8777/live', this)">
+<img src="./radio_logos/Urban_FM.png"/>
+<div>Urban FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Fx_Net.png" onclick="playRadio('https://asculta.radiofxnet.ro/', this)">
+<img src="./radio_logos/Radio_Fx_Net.png"/>
+<div>Radio Fx Net</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_BOOM_Energy.jpg" onclick="playRadio('https://stream.radioboom.ro:8510/radio.mp3', this)">
+<img src="./radio_logos/Radio_BOOM_Energy.jpg"/>
+<div>Radio BOOM Energy</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_BOOM_House_Music.jpg" onclick="playRadio('https://stream.radioboom.ro:8530/radio.mp3', this)">
+<img src="./radio_logos/Radio_BOOM_House_Music.jpg"/>
+<div>Radio BOOM House Music</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_BOOM_Gold.jpg" onclick="playRadio('https://stream.radioboom.ro:8500/radio.mp3', this)">
+<img src="./radio_logos/Radio_BOOM_Gold.jpg"/>
+<div>Radio BOOM Gold</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_BOOM_Rock.jpg" onclick="playRadio('https://stream.radioboom.ro:8520/radio.mp3', this)">
+<img src="./radio_logos/Radio_BOOM_Rock.jpg"/>
+<div>Radio BOOM Rock</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Disco_Mix.png" onclick="playRadio('https://play.discomix.ro/8002/discomix128', this)">
+<img src="./radio_logos/Radio_Disco_Mix.png"/>
+<div>Radio Disco Mix</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Contact_90.png" onclick="playRadio('http://radio2.ip4.ro:7480/;', this)">
+<img src="./radio_logos/Radio_Contact_90.png"/>
+<div>Radio Contact 90</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Contact.png" onclick="playRadio('http://radiocontact.ddns.net:1000/stream', this)">
+<img src="./radio_logos/Radio_Contact.png"/>
+<div>Radio Contact</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Contact_FM.png" onclick="playRadio('https://panel.radiocontactfm.ro/8010/stream', this)">
+<img src="./radio_logos/Radio_Contact_FM.png"/>
+<div>Radio Contact FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Trapanele.png" onclick="playRadio('https://live.radiotrapanele.ro:8132/stream', this)">
+<img src="./radio_logos/Radio_Trapanele.png"/>
+<div>Radio Trapanele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Popular_Manele_Vechi.png" onclick="playRadio('http://manele.radiopopular.ro:8000/;', this)">
+<img src="./radio_logos/Radio_Popular_Manele_Vechi.png"/>
+<div>Radio Popular Manele Vechi</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Fm_Radio_Manele.png" onclick="playRadio('https://ssl.fmradiomanele.ro:8054/stream', this)">
+<img src="./radio_logos/Fm_Radio_Manele.png"/>
+<div>Fm Radio Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Fm_Radio_Petrecere.png" onclick="playRadio('https://ssl.fmradiomanele.ro:8123/stream', this)">
+<img src="./radio_logos/Fm_Radio_Petrecere.png"/>
+<div>Fm Radio Petrecere</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Manele_FM.png" onclick="playRadio('https://play.wrhradios.com/8044/stream', this)">
+<img src="./radio_logos/Radio_Manele_FM.png"/>
+<div>Radio Manele FM</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Manele_Vechi.png" onclick="playRadio('https://mars.streamerr.co/8216/stream', this)">
+<img src="./radio_logos/Radio_Manele_Vechi.png"/>
+<div>Radio Manele Vechi</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Capital_FM.png" onclick="playRadio('https://ssl.omegahost.ro/8020/stream', this)">
+<img src="./radio_logos/Capital_FM.png"/>
+<div>Capital FM Manele</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Capital_FM.png" onclick="playRadio('https://radio.sonicpanel.ro/8020/stream', this)">
+<img src="./radio_logos/Capital_FM.png"/>
+<div>Capital FM Dance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Capital_FM.png" onclick="playRadio('https://radio.sonicpanel.ro/7000/stream', this)">
+<img src="./radio_logos/Capital_FM.png"/>
+<div>Capital FM Etno</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Dance_Wave.png" onclick="playRadio('https://dancewave.online/dance.mp3', this)">
+<img src="./radio_logos/Dance_Wave.png"/>
+<div>Dance Wave!</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Dance_Wave.png" onclick="playRadio('https://dancewave.online/retrodance.mp3', this)">
+<img src="./radio_logos/Dance_Wave.png"/>
+<div>Dance Wave Retro!</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/SuperSonic_Radio.png" onclick="playRadio('https://s5.radio.co/s08e5c5875/listen', this)">
+<img src="./radio_logos/SuperSonic_Radio.png"/>
+<div>SuperSonic Radio</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Dreams_Dance_Hits.jpg" onclick="playRadio('http://radiodreams.g1.ro:3390/stream', this)">
+<img src="./radio_logos/Radio_Dreams_Dance_Hits.jpg"/>
+<div>Radio Dreams Dance Hits</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Radio_Dreams_Classic_90s_Hits.jpg" onclick="playRadio('http://radiodreams.g1.ro:3399/stream', this)">
+<img src="./radio_logos/Radio_Dreams_Classic_90s_Hits.jpg"/>
+<div>Radio Dreams Classic 90's Hits</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/MoveDaHouse.jpg" onclick="playRadio('https://uk7.internet-radio.com/proxy/movedahouse?mp=//stream', this)">
+<img src="./radio_logos/MoveDaHouse.jpg"/>
+<div>MoveDaHouse - Underground House Music</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Zero_Radio.jpg" onclick="playRadio('https://uk7.internet-radio.com/proxy/0radio?mp=%2Flive&1779827349701', this)">
+<img src="./radio_logos/Zero_Radio.jpg"/>
+<div>Zero Radio - soul, rnb, house, disco</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Dance_UK_Radio.jpg" onclick="playRadio('https://dancestream.danceradiouk.com/stream', this)">
+<img src="./radio_logos/Dance_UK_Radio.jpg"/>
+<div>Dance UK Radio - Club, House, Dance & Trance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Box_UK_Radio.jpg" onclick="playRadio('https://boxstream.danceradiouk.com/stream', this)">
+<img src="./radio_logos/Box_UK_Radio.jpg"/>
+<div>Box UK Radio - Pop, Rock, Soul</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/The_Hitman_Radio.png" onclick="playRadio('https://uk2.internet-radio.com/proxy/thehitmanradio?mp=/stream;', this)">
+<img src="./radio_logos/The_Hitman_Radio.png"/>
+<div>The Hitman Radio - 80's 90's dance hits</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Classics_Radio.png" onclick="playRadio('https://a4.asurahosting.com:7080/radio.mp3', this)">
+<img src="./radio_logos/Classics_Radio.png"/>
+<div>Classics Radio - non-stop retro classic hits</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Vibe_FM_logo.jpg" onclick="playRadio('https://uk2.internet-radio.com/proxy/vibefm?mp=/live', this)">
+<img src="./radio_logos/Vibe_FM_logo.jpg"/>
+<div>Vibe FM - dance, trance, techno, house</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/ViBE_FM_Las_Vegas.png" onclick="playRadio('https://s6.autopo.st/proxy/cxappblo?mp=/stream', this)">
+<img src="./radio_logos/ViBE_FM_Las_Vegas.png"/>
+<div>ViBE FM Las Vegas</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/PulseEDM.png" onclick="playRadio('https://naxos.cdnstream.com/1373_128', this)">
+<img src="./radio_logos/PulseEDM.png"/>
+<div>PulseEDM - Dance Music Radio Station</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/DDM_Radio_Ireland.png" onclick="playRadio('http://93.107.98.107:8000/;', this)">
+<img src="./radio_logos/DDM_Radio_Ireland.png"/>
+<div>DDM Radio Ireland - Dance Hits</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/TrancePulse_Dublin.png" onclick="playRadio('https://stream.trance.ie:8443/stream', this)">
+<img src="./radio_logos/TrancePulse_Dublin.png"/>
+<div>TrancePulse Dublin</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/Intense_Radio.png" onclick="playRadio('https://secure.live-streams.nl/main', this)">
+<img src="./radio_logos/Intense_Radio.png"/>
+<div>Intense Radio - We Love Dance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioMonster.FM.jpg" onclick="playRadio('https://ic.radiomonster.fm/tophits.high', this)">
+<img src="./radio_logos/RadioMonster.FM.jpg"/>
+<div>RadioMonster.FM Tophits</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioMonster.FM.jpg" onclick="playRadio('https://ic.radiomonster.fm/dance.high', this)">
+<img src="./radio_logos/RadioMonster.FM.jpg"/>
+<div>RadioMonster.FM Dance</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioMonster.FM.jpg" onclick="playRadio('https://ic.radiomonster.fm/evergreens.high', this)">
+<img src="./radio_logos/RadioMonster.FM.jpg"/>
+<div>RadioMonster.FM Evergreens</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioMonster.FM.jpg" onclick="playRadio('https://ic.radiomonster.fm/rock.high', this)">
+<img src="./radio_logos/RadioMonster.FM.jpg"/>
+<div>RadioMonster.FM Rock</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioMonster.FM.jpg" onclick="playRadio('https://ic.radiomonster.fm/rnb.high', this)">
+<img src="./radio_logos/RadioMonster.FM.jpg"/>
+<div>RadioMonster.FM R&B</div>
+</div><div class="station"
+     data-logo="./radio_logos/RadioMonster.FM.jpg" onclick="playRadio('https://ic.radiomonster.fm/80s.high', this)">
+<img src="./radio_logos/RadioMonster.FM.jpg"/>
+<div>RadioMonster.FM 80's</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioMonster.FM.jpg" onclick="playRadio('https://ic.radiomonster.fm/90s.high', this)">
+<img src="./radio_logos/RadioMonster.FM.jpg"/>
+<div>RadioMonster.FM 90's</div>
+</div>
+<div class="station"
+     data-logo="./radio_logos/RadioMonster.FM.jpg" onclick="playRadio('https://ic.radiomonster.fm/2000s.high', this)">
+<img src="./radio_logos/RadioMonster.FM.jpg"/>
+<div>RadioMonster.FM 2000's</div>
+</div>
+</div>
+
+<script>
+let hls;
+let metadataInterval;
+const player = document.getElementById('player');
+const nowPlaying = document.getElementById('nowPlaying');
+
+function updateMediaSession(stationName, track = '', logo = '') {
+
+  if (!('mediaSession' in navigator)) return;
+
+  let artist = 'Radio pe net';
+  let title = stationName;
+
+  if (track && track.includes(' - ')) {
+
+    const parts = track.split(' - ');
+
+    artist = parts[0]?.trim() || 'Live';
+    title = parts.slice(1).join(' - ').trim() || stationName;
+
+  } else if (track) {
+
+    title = track;
+
+  }
+
+  navigator.mediaSession.metadata = new MediaMetadata({
+
+    title: title,
+    artist: artist,
+    album: stationName,
+
+    artwork: [
+      {
+        src: logo,
+        sizes: '512x512',
+        type: 'image/png'
+      }
+    ]
+
+  });
+
+  navigator.mediaSession.setActionHandler('play', () => {
+    player.play();
+  });
+
+  navigator.mediaSession.setActionHandler('pause', () => {
+    player.pause();
+  });
+}
+
+
+async function fetchMetadataAPI(name, logo = '') {
+
+  // Dezactivare metadata pentru anumite posturi
+  const disabledMetadataStations = [
+
+    'virgin radio',
+    'radio zu',
+    'kiss fm',
+    'nostalgia radio',
+    'radio café',
+    'radio cafe',
+    'play radio',
+    'play café',
+    'play cafe',
+    'radio total',
+    'gherla fm',
+    'radio impuls',
+    'radio oldies',
+    'rock fm',
+    'joy fm',
+    'one fm',
+    'radio bucureşti fm',
+    'radio bucuresti fm',
+    'deep house radio',
+    'radio contact 90',
+    'radio contact',
+    'radio contact fm'
+
+  ];
+
+  const matchedStation = disabledMetadataStations.find(
+    station => name.toLowerCase().includes(station)
+  );
+
+  if (matchedStation) {
+
+    nowPlaying.innerText =
+      '🎧  ' + name;
+
+    updateMediaSession(
+      name,
+      name,
+      logo
+    );
+
+    return;
+  }
+
+  try {
+
+    // ------------------------------------
+    // Get station from Radio Browser
+    // ------------------------------------
+
+    const res = await fetch(
+      `https://de1.api.radio-browser.info/json/stations/byname/${encodeURIComponent(name)}`
+    );
+
+    const data = await res.json();
+
+    if (!data || !data.length) return;
+
+    const station = data[0];
+
+    // ------------------------------------
+    // Format tags
+    // ------------------------------------
+
+    const tags = station.tags
+      ? station.tags
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean)
+          .slice(0, 3)
+          .join(' • ')
+      : '';
+
+    // ------------------------------------
+    // Try station metadata endpoints
+    // ------------------------------------
+
+    let track = '';
+
+    // Base URL
+    const homepage =
+      station.homepage?.replace(/\/$/, '') || '';
+
+    const endpoints = [
+      `${homepage}/api/nowplaying`,
+      `${homepage}/status-json.xsl`,
+      `${homepage}/stats?json=1`
+    ];
+
+    for (const url of endpoints) {
+
+      try {
+
+        const metaRes = await fetch(url);
+
+        if (!metaRes.ok) continue;
+
+        const meta = await metaRes.json();
+
+        // --------------------------------
+        // AzuraCast
+        // --------------------------------
+
+        if (
+          meta.now_playing?.song
+        ) {
+
+          track =
+            `${meta.now_playing.song.artist} - ` +
+            `${meta.now_playing.song.title}`;
+
+          break;
+        }
+
+        // --------------------------------
+        // Icecast
+        // --------------------------------
+
+        if (
+          meta.icestats?.source?.title
+        ) {
+
+          track =
+            meta.icestats.source.title;
+
+          break;
+        }
+
+        // --------------------------------
+        // SHOUTcast
+        // --------------------------------
+
+        if (
+          meta.songtitle
+        ) {
+
+          track = meta.songtitle;
+
+          break;
+        }
+
+      } catch {}
+    }
+
+    // ------------------------------------
+    // Fallback to RadioBrowser fields
+    // ------------------------------------
+
+    if (!track) {
+
+      track =
+        station.nowplaying ||
+        station.now_playing ||
+        station.songtitle ||
+        station.title ||
+        '';
+    }
+
+    // ------------------------------------
+    // Render
+    // ------------------------------------
+
+    nowPlaying.innerText =
+      `🎧  ${station.name}` +
+      `${track ? ` • ${track}` : ''}` +
+      `${tags ? ` • ${tags}` : ''}`;
+
+    updateMediaSession(
+      station.name,
+      track,
+      logo
+    );
+
+  } catch (e) {
+
+    console.error(e);
+
+  }
+}
+
+function playRadio(url, element){
+  document.querySelectorAll('.station').forEach(s => s.classList.remove('active'));
+  if(element) element.classList.add('active');
+
+  localStorage.setItem("lastRadio", url);
+
+  if(element){
+    localStorage.setItem("lastRadioName", element.innerText.trim());
+  }
+
+  const logo =
+    element?.dataset?.logo ||
+    './dependencies/audio-logo.png';
+
+  if(metadataInterval) clearInterval(metadataInterval);
+
+  if (hls) {
+    hls.destroy();
+    hls = null;
+  }
+
+  try {
+    if (url.includes(".m3u8")) {
+      if (Hls.isSupported()) {
+        hls = new Hls();
+        hls.loadSource(url);
+        hls.attachMedia(player);
+
+        hls.on(Hls.Events.MANIFEST_PARSED, function () {
+          player.muted = true;
+          player.play().then(()=>player.muted=false);
+        });
+
+        hls.on(Hls.Events.ERROR, function (event, data) {
+          if (data.fatal) {
+            nowPlaying.innerText = "❌ Stream HLS indisponibil";
+          }
+        });
+
+      } else if (player.canPlayType('application/vnd.apple.mpegurl')) {
+        player.src = url;
+        player.muted = true;
+        player.play().then(()=>player.muted=false);
+      }
+    } else {
+      player.src = url;
+      player.muted = true;
+      player.play().then(()=>player.muted=false);
+    }
+
+    const name = element?.innerText || localStorage.getItem("lastRadio") || "Radio";
+    nowPlaying.innerText = "🎧  Se încarcă: " + name;
+
+    updateMediaSession(
+      name,
+      name,
+      logo
+    );
+
+    fetchMetadataAPI(name, logo);
+    metadataInterval = setInterval(()=>{
+      fetchMetadataAPI(name, logo);
+    }, 10000);
+
+  } catch (e) {
+    nowPlaying.innerText = "❌ Eroare la redare";
+  }
+}
+
+player.onerror = () => {
+  nowPlaying.innerText = "❌ Stream indisponibil";
+};
+
+player.addEventListener("loadedmetadata", () => {
+  const activeStation =
+    document.querySelector('.station.active div')?.innerText ||
+    localStorage.getItem("lastRadioName") ||
+    "Radio";
+
+  nowPlaying.innerText = "▶ Redare live: " + activeStation;
+});
+
+window.addEventListener("load", () => {
+  const lastRadio = localStorage.getItem("lastRadio");
+  const lastRadioName = localStorage.getItem("lastRadioName");
+
+  if(lastRadio){
+    playRadio(lastRadio);
+
+    if(lastRadioName){
+    nowPlaying.innerText = "🎧  Ultimul radio ascultat: " + lastRadioName;
+    }
+  }
+});
+
+let searchTimeout;
+document.getElementById('search').addEventListener('input', function() {
+  clearTimeout(searchTimeout);
+
+  searchTimeout = setTimeout(() => {
+    let val = this.value.toLowerCase();
+
+    document.querySelectorAll('.station').forEach(s => {
+      const text = s.querySelector('div').innerText.toLowerCase();
+      s.style.display = text.includes(val) ? '' : 'none';
+    });
+
+  }, 250);
+});
+</script>
+</body>
+</html>
